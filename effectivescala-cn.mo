@@ -12,6 +12,7 @@
 <a href="index.html">English</a>
 <a href="index-ja.html">日本語</a>
 <a href="index-ru.html">Русский</a>
+<a href="index-pt.html">Português</a>
 
 ## 序言
 
