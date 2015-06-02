@@ -41,9 +41,9 @@ depois da corretude, pense sempre no leitor.
 
 Acima de tudo, *programe em Scala*. Você não está escrevendo Java,
 nem Haskell, tampouco Python; um programa em Scala é diferente de
-um escrito em qualquer uma dessas. Para um uso efetivo, você deve 
+um escrito em qualquer uma dessas. Para um uso efetivo, você deve
 expressar seus problemas nos termos da linguagem. De nada adianta
-forçar um programa de Java para Scala, pois será inferior ao 
+forçar um programa de Java para Scala, pois será inferior ao
 original na maioria dos aspectos.
 
 Essa não é uma introdução ao Scala; nós assumimos que o leitor
@@ -60,7 +60,7 @@ será alterado: Sempre favoreça a legibilidade; escreva código
 genérico mas não em detrimento da clareza; aproveite-se de
 funcionalidades simples da linguagem que concedem grande poder,
 mas evite funcionalidades esotéricas (especialmente relacionadas
-ao sistema de tipos). Sobretudo, esteja sempre ciente dos 
+ao sistema de tipos). Sobretudo, esteja sempre ciente dos
 trade-offs de suas escolhas. Uma linguagem sofisticada requer uma
 implementação complexa, e complexidade gera complexidade: de
 raciocínio, de semântica, de interação entre funcionalidades, e
@@ -70,69 +70,69 @@ utilidade excede o seu custo.
 
 E divirta-se.
 
-## Formatting
+## Formatação
 
-The specifics of code *formatting* -- so long as they are practical --
-are of little consequence. By definition style cannot be inherently
-good or bad and almost everybody differs in personal
-preference. However the *consistent* application of the same 
-formatting rules will almost always enhance
-readability. A reader already familiar with a particular style does
-not have to grasp yet another set of local conventions, or decipher
-yet another corner of the language grammar.
+Os detalhes da *formatação* de código - desde que sejam práticos -
+possuem poucas consequências. Por definição, estilo não é inerentemente
+bom ou ruim, é questão de preferência pessoal. No entanto, a aplicação
+*consistente* das mesmas regras de formatação quase sempre aprimora
+a legibilidade. Um leitor já familiarizado com um determinado estilo
+não precisa assimilar ainda mais um conjunto de convenções locais, ou
+decifrar outro canto obscuro da gramática da linguagem.
 
-This is of particular importance to Scala, as its grammar has a high
-degree of overlap. One telling example is method invocation: Methods
-can be invoked with "`.`", with whitespace, without parenthesis for
-nullary or unary methods, with parenthesis for these, and so on.
-Furthermore, the different styles of method invocations expose
-different ambiguities in its grammar! Surely the consistent
-application of a carefully chosen set of formatting rules will resolve
-a great deal of ambiguity for both man and machine.
+Isso é de particular importância no Scala, já que sua gramática
+possui um alto grau de intersecção. Um exemplo revelador é a invocação
+de método: Métodos podem ser invocados com "`.`", com um espaço, sem
+parênteses para métodos nulários ou unários, com parênteses para
+esses e outros e assim por diante. Ademais, os diferentes estilos
+de invocação de método expõem diferentes ambiguidades na gramática!
+Certamente, a aplicação consistente de um conjunto de regras de
+formatação cuidadosamente escolhido solucionará uma grande dose de
+ambiguidade, tanto para o homem quanto para a máquina.
 
-We adhere to the [Scala style
-guide](http://docs.scala-lang.org/style/) plus the following rules.
+Somos adeptos do [Scala style guide](http://docs.scala-lang.org/style/)
+e das regras a seguir.
 
-### Whitespace
+### Espaços
 
-Indent by two spaces. Try to avoid lines greater than 100 columns in
-length. Use one blank line between method, class, and object definitions.
+Indente com dois espaços. Tente evitar linhas com mais de 100 colunas
+de comprimento. Use uma linha em branco entre definições de métodos,
+classes e objetos.
 
-### Naming
+### Nomeação
 
 <dl class="rules">
-<dt>Use short names for small scopes</dt>
-<dd> <code>i</code>s, <code>j</code>s and <code>k</code>s are all but expected
-in loops. </dd>
-<dt>Use longer names for larger scopes</dt>
-<dd>External APIs should have longer and explanatory names that confer meaning.
-<code>Future.collect</code> not <code>Future.all</code>.
+<dt>Use nomes pequenos para escopos pequenos</dt>
+<dd> <code>i</code>s, <code>j</code>s e <code>k</code>s são esperados
+em loops. </dd>
+<dt>Use nomes mais longos para escopos maiores</dt>
+<dd>APIs externas devem possuir nomes longos e explicativos, que possuam significado.
+<code>Future.collect</code> e não <code>Future.all</code>.
 </dd>
-<dt>Use common abbreviations but eschew esoteric ones</dt>
+<dt>Use abreviaturas comuns mas evite as esotéricas</dt>
 <dd>
-Everyone
-knows <code>ok</code>, <code>err</code> or <code>defn</code> 
-whereas <code>sfri</code> is not so common.
+Todos conhecem <code>ok</code>, <code>err</code> ou <code>defn</code>
+enquanto <code>sfri</code> não é tão comum.
 </dd>
-<dt>Don't rebind names for different uses</dt>
+<dt>Não reutilize nomes para propósitos diferentes</dt>
 <dd>Use <code>val</code>s</dd>
-<dt>Avoid using <code>`</code>s to overload reserved names.</dt>
-<dd><code>typ</code> instead of <code>`type</code>`</dd>
-<dt>Use active names for operations with side effects</dt>
-<dd><code>user.activate()</code> not <code>user.setActive()</code></dd>
-<dt>Use descriptive names for methods that return values</dt>
-<dd><code>src.isDefined</code> not <code>src.defined</code></dd>
-<dt>Don't prefix getters with <code>get</code></dt>
-<dd>As per the previous rule, it's redundant: <code>site.count</code> not <code>site.getCount</code></dd>
-<dt>Don't repeat names that are already encapsulated in package or object name</dt>
-<dd>Prefer:
+<dt>Evite usar <code>`</code>s para sobrecarregar nomes reservados</dt>
+<dd><code>typ</code> ao invés de <code>`type</code>`</dd>
+<dt>Use nomes ativos para operações com efeitos colaterais</dt>
+<dd><code>user.activate()</code> e não <code>user.setActive()</code></dd>
+<dt>Use nomes descritivos para métodos que retornam valores</dt>
+<dd><code>src.isDefined</code> e não <code>src.defined</code></dd>
+<dt>Não prefixe getters com <code>get</code></dt>
+<dd>Assim como a regra anterior, é redundante: <code>site.count</code> e não <code>site.getCount</code></dd>
+<dt>Não repita nomes que já estão encapsulados no nome do pacote ou do objeto</dt>
+<dd>Prefira:
 <pre><code>object User {
   def get(id: Int): Option[User]
-}</code></pre> to
+}</code></pre> a
 <pre><code>object User {
   def getUser(id: Int): Option[User]
-}</code></pre>They are redundant in use: <code>User.getUser</code> provides
-no more information than <code>User.get</code>.
+}</code></pre>Eles são redundantes no seu uso: <code>User.getUser</code> não
+provê mais informações que <code>User.get</code>.
 </dd>
 </dl>
 
