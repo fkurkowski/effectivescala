@@ -3,66 +3,72 @@
 <h1 class="header">Effective Scala</h1>
 <address>Marius Eriksen, Twitter Inc.<br />marius@twitter.com (<a href="http://twitter.com/marius">@marius</a>)</address>
 
-<h2>Table of Contents</h2>
+<h2>Sumário</h2>
 
 .TOC
 
 
-<h2>Other languages</h2>
+<h2>Outros idiomas</h2>
 <a href="index.html">English</a>
 <a href="index-ja.html">日本語</a>
 <a href="index-ru.html">Русский</a>
 <a href="index-cn.html">简体中文</a>
 
 
-## Introduction
+## Introdução
 
-[Scala][Scala] is one of the main application programming languages
-used at Twitter. Much of our infrastructure is written in Scala and
-[we have several large libraries](http://github.com/twitter/)
-supporting our use. While highly effective, Scala is also a large language,
-and our experiences have taught us to practice great care in its
-application. What are its pitfalls? Which features do we embrace,
-which do we eschew? When do we employ "purely functional style", and when
-do we avoid it? In other words: what have we found to be an effective
-use of the language?  This guide attempts to distill our experience into short
-essays, providing a set of *best practices*. Our use of Scala is mainly for
-creating high volume services that form distributed systems -- and our
-advice is thus biased -- but most of the advice herein should translate
-naturally to other domains. This is not the law, but deviation should
-be well justified.
+[Scala][Scala] é uma das principais linguagens de programação de aplicações
+usadas no Twitter. Muito da nossa infraestrutura está escrita em Scala e
+[nós possuímos diversas bibliotecas extensas](http://github.com/twitter/)
+para suportar o nosso uso. Embora altamente efetiva, Scala é também uma
+linguagem grande, e nossa experiência nos ensinou a exercitar a cautela
+em sua utilização. Quais são suas armadilhas? Quais funcionalidades nós
+abraçamos, quais evitamos? Quando empregamos o "estilo puramente funcional",
+e quando fugimos dele? Em outras palavras: qual modo de uso da linguagem
+nós descobrimos ser efetivo? Esse guia é uma tentativa de extrair nossa
+experiência em curtos artigos, fornecendo um conjunto de *melhores
+práticas*. Utilizamos Scala principalmente na criação de serviços de
+alto volume que compõem sistemas distribuídos -- e nossas sugestões são,
+portanto, enviesadas -- mas a maioria dos conselhos aqui contidos deve
+ser naturalmente aplicável em outros domínios. Estas não são leis, mas
+o seu desvio deve ser bem justificado.
 
-Scala provides many tools that enable succinct expression. Less typing
-is less reading, and less reading is often faster reading, and thus
-brevity enhances clarity. However brevity is a blunt tool that can
-also deliver the opposite effect: After correctness, think always of
-the reader.
+Scala fornece vários instrumentos que possibilitam expressões sucintas.
+Menos digitação é menos leitura, menos leitura é frequentemente leitura
+mais rápida, e assim a brevidade eleva a clareza. Contudo, a brevidade
+é uma ferramenta brusca que também pode resultar no efeito oposto:
+depois da corretude, pense sempre no leitor.
 
-Above all, *program in Scala*. You are not writing Java, nor Haskell,
-nor Python; a Scala program is unlike one written in any of these. In
-order to use the language effectively, you must phrase your problems
-in its terms. There's no use coercing a Java program into Scala, for
-it will be inferior in most ways to its original.
+Acima de tudo, *programe em Scala*. Você não está escrevendo Java,
+nem Haskell, tampouco Python; um programa em Scala é diferente de
+um escrito em qualquer uma dessas. Para um uso efetivo, você deve 
+expressar seus problemas nos termos da linguagem. De nada adianta
+forçar um programa de Java para Scala, pois será inferior ao 
+original na maioria dos aspectos.
 
-This is not an introduction to Scala; we assume the reader
-is familiar with the language. Some resources for learning Scala are:
+Essa não é uma introdução ao Scala; nós assumimos que o leitor
+possui familiaridade com a linguagem. Alguns recursos para aprender
+Scala são:
 
 * [Scala School](http://twitter.github.com/scala_school/)
 * [Learning Scala](http://www.scala-lang.org/node/1305)
 * [Learning Scala in Small Bites](http://matt.might.net/articles/learning-scala-in-small-bites/)
 
-This is a living document that will change to reflect our current
-"best practices," but its core ideas are unlikely to change: Always
-favor readability; write generic code but not at the expensive of
-clarity; take advantage of simple language features that afford great
-power but avoid the esoteric ones (especially in the type system).
-Above all, be always aware of the trade offs you make. A sophisticated
-language requires a complex implementation, and complexity begets
-complexity: of reasoning, of semantics, of interaction between
-features, and of the understanding of your collaborators. Thus complexity
-is the tax of sophistication -- you must always ensure that its utility exceeds its cost.
+Esse é um documento em evolução, que mudará para refletir as nossas
+atuais "melhores práticas", mas o seu núcleo de ideias dificilmente
+será alterado: Sempre favoreça a legibilidade; escreva código
+genérico mas não em detrimento da clareza; aproveite-se de
+funcionalidades simples da linguagem que concedem grande poder,
+mas evite funcionalidades esotéricas (especialmente relacionadas
+ao sistema de tipos). Sobretudo, esteja sempre ciente dos 
+trade-offs de suas escolhas. Uma linguagem sofisticada requer uma
+implementação complexa, e complexidade gera complexidade: de
+raciocínio, de semântica, de interação entre funcionalidades, e
+de compreensão entre os seus colaboradores. Portanto, a complexidade
+é uma tarifa da sofisticação -- e você deve sempre garantir que sua
+utilidade excede o seu custo.
 
-And have fun.
+E divirta-se.
 
 ## Formatting
 
