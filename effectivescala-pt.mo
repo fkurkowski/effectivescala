@@ -140,45 +140,45 @@ provê mais informações que <code>User.get</code>.
 ### Imports
 
 <dl class="rules">
-<dt>Sort import lines alphabetically</dt>
-<dd>This makes it easy to examine visually, and is simple to automate.</dd>
-<dt>Use braces when importing several names from a package</dt>
+<dt>Ordene as linhas de import alfabeticamente</dt>
+<dd>Isso faz com que fique fácil de examinar visualmente, e é fácil de automatizar.</dd>
+<dt>Use chaves ao importar múltiplos nomes de um pacote</dt>
 <dd><code>import com.twitter.concurrent.{Broker, Offer}</code></dd>
-<dt>Use wildcards when more than six names are imported</dt>
-<dd>e.g.: <code>import com.twitter.concurrent._</code>
-<br />Don't apply this blindly: some packages export too many names</dd>
-<dt>When using collections, qualify names by importing 
-<code>scala.collection.immutable</code> and/or <code>scala.collection.mutable</code></dt>
-<dd>Mutable and immutable collections have dual names. 
-Qualifiying the names makes is obvious to the reader which variant is being used (e.g. "<code>immutable.Map</code>")</dd>
-<dt>Do not use relative imports from other packages</dt>
-<dd>Avoid <pre><code>import com.twitter
-import concurrent</code></pre> in favor of the unambiguous <pre><code>import com.twitter.concurrent</code></pre></dd>
-<dt>Put imports at the top of the file</dt>
-<dd>The reader can refer to all imports in one place.</dd>
+<dt>Use wildcards quando mais de seis nomes são importados</dt>
+<dd>ex: <code>import com.twitter.concurrent._</code>
+<br />Não aplique essa técnica cegamente: alguns pacotes exportam nomes demais</dd>
+<dt>Ao usar coleções, classifique os nomes na importação
+<code>scala.collection.immutable</code> e/ou <code>scala.collection.mutable</code></dt>
+<dd>Coleções mutáveis e imutáveis possuem duplicidade de nomes.
+Classificar os nomes torna obvio ao leitor qual variação está sendo utilizada. (ex. "<code>immutable.Map</code>")</dd>
+<dt>Não use imports relativos de outros pacotes</dt>
+<dd>Evite <pre><code>import com.twitter
+import concurrent</code></pre> e favoreça <pre><code>import com.twitter.concurrent</code></pre></dd>
+<dt>Coloque os imports no início do arquivo</dt>
+<dd>O leitor pode consultar todos os imports em um lugar.</dd>
 </dl>
 
-### Braces
+### Chaves
 
-Braces are used to create compound expressions (they serve other uses
-in the "module language"), where the value of the compound expression
-is the last expression in the list. Avoid using braces for simple
-expressions; write
+Chaves são utilizadas para criar expressões compostas (elas possuem
+outros usos na "linguagem de módulos"), onde o valor da expressão
+composta é a última expressão do conjunto. Evite usar chaves para
+expressões simples; escreva
 
 	def square(x: Int) = x*x
-	
-.LP but not
+
+.LP e não
 
 	def square(x: Int) = {
 	  x * x
 	}
-	
-.LP even though it may be tempting to distinguish the method body syntactically. The first alternative has less clutter and is easier to read. <em>Avoid syntactical ceremony</em> unless it clarifies.
+
+.LP mesmo que seja tentador distinguir sintaticamente o corpo do método. A primeira alternativa é mais limpa e legível. <em>Evite cerimonial sintático</em> exceto quando deixa o código mais claro.
 
 ### Pattern matching
 
-Use pattern matching directly in function definitions whenever applicable;
-instead of
+Use o casamento de padrões diretamente na definição das funções quando aplicável;
+ao invés de
 
 	list map { item =>
 	  item match {
@@ -186,37 +186,37 @@ instead of
 	    case None => default
 	  }
 	}
-	
-.LP collapse the match
+
+.LP compacte o match
 
 	list map {
 	  case Some(x) => x
 	  case None => default
 	}
 
-.LP it's clear that the list items are being mapped over &mdash; the extra indirection does not elucidate.
+.LP fica claro que os itens da lista estão sendo mapeados &mdash; a indireção adicional não ajuda na elucidação.
 
-### Comments
+### Comentários
 
-Use [ScalaDoc](https://wiki.scala-lang.org/display/SW/Scaladoc) to
-provide API documentation. Use the following style:
+Use [ScalaDoc](https://wiki.scala-lang.org/display/SW/Scaladoc) para
+a documentação de APIs. Utilize o seguinte estilo:
 
 	/**
-	 * ServiceBuilder builds services 
+	 * ServiceBuilder builds services
 	 * ...
 	 */
-	 
-.LP but <em>not</em> the standard ScalaDoc style:
+
+.LP e <em>não</em> o estilo ScalaDoc padrão:
 
 	/** ServiceBuilder builds services
 	 * ...
 	 */
 
-Do not resort to ASCII art or other visual embellishments. Document
-APIs but do not add unnecessary comments. If you find yourself adding
-comments to explain the behavior of your code, ask first if it can be
-restructured so that it becomes obvious what it does. Prefer
-"obviously it works" to "it works, obviously" (with apologies to Hoare).
+Não recorra à arte ASCII ou outras ornamentações visuais. Documente APIs
+mas não acrescente comentários desnecessários. Caso esteja escrevendo
+comentários para explicar o comportamento do código, primeiro questione
+se ele pode ser reestruturado de forma a tornar óbvio o que faz. Prefira
+"obviamente funciona" a "funciona, obviamente" (com desculpas ao Hoare).
 
 ## Types and Generics
 
