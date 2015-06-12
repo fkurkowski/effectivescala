@@ -218,109 +218,113 @@ comentários para explicar o comportamento do código, primeiro questione
 se ele pode ser reestruturado de forma a tornar óbvio o que faz. Prefira
 "obviamente funciona" a "funciona, obviamente" (com desculpas ao Hoare).
 
-## Types and Generics
+## Tipos e Generics
 
-The primary objective of a type system is to detect programming
-errors. The type system effectively provides a limited form of static
-verification, allowing us to express certain kinds of invariants about
-our code that the compiler can verify. Type systems provide other
-benefits too of course, but error checking is its Raison d&#146;&Ecirc;tre.
+O objetivo primário de um sistema de tipos é a detecção de erros de
+programação. Efetivamente, o sistema de tipos provê uma forma limitada de
+validação estática, permitindo-nos expressar certas invariáveis sobre o
+nosso código que o compilador pode verificar. É claro que os sistemas de
+tipos também possuem outros benefícios, mas a verificação de erros é sua
+Raison d&#146;&Ecirc;tre.
 
-Our use of the type system should reflect this goal, but we must
-remain mindful of the reader: judicious use of types can serve to
-enhance clarity, being unduly clever only obfuscates.
+A nossa utilização do sistema de tipos deve refletir esse objetivo, mas
+sem esquecer do leitor: o uso apropriado da tipagem pode aprimorar a
+clareza, enquanto ser demasiadamente engenhoso apenas obscurece.
 
-Scala's powerful type system is a common source of academic
-exploration and exercise (eg. [Type level programming in
+O poderoso sistema de tipos do Scala é uma fonte comum de exploração
+e exercício acadêmico (ex. [Type level programming in
 Scala](http://apocalisp.wordpress.com/2010/06/08/type-level-programming-in-scala/)).
-While a fascinating academic topic, these techniques rarely find
-useful application in production code. They are to be avoided.
+Embora um tópico acadêmico fascinante, essas técnicas raramente são
+úteis em código de produção. Elas devem ser evitadas.
 
-### Return type annotations
+### Anotações com o tipo de retorno
 
-While Scala allows these to be omitted, such annotations provide good
-documentation: this is especially important for public methods. Where a
-method is not exposed and its return type obvious, omit them.
+Embora o Scala permita que as mesmas sejam omitidas, elas servem de
+documentação: isso é especialmente importante para métodos públicos.
+Quando um método não estiver exposto e seu tipo de retorno é óbvio,
+omita-as.
 
-This is especially important when instantiating objects with mixins as
-the scala compiler creates singleton types for these. For example, `make`
-in:
+As anotações são fundamentais ao instanciar objetos com mixins, já que
+o compilador do Scala cria um tipo singleton para esses casos. Por
+exemplo, o método `make` em:
 
 	trait Service
 	def make() = new Service {
 	  def getId = 123
 	}
 
-.LP does <em>not</em> have a return type of <code>Service</code>; the compiler creates the refinement type <code>Object with Service{def getId: Int}</code>. Instead use an explicit annotation:
+.LP <em>não</em> possui um tipo de retorno <code>Service</code>; o compilador cria um tipo refinado <code>Object with Service{def getId: Int}</code>. Ao contrário, use uma anotação explícita:
 
 	def make(): Service = new Service{}
 
-Now the author is free to mix in more traits without changing the
-public type of `make`, making it easier to manage backwards
-compatibility.
+Agora, o autor fica livre para adicionar mais feições sem alterar o
+tipo público de `make`, facilitando o gerenciamento de compatibilidade
+reversa.
 
-### Variance
+### Variância
 
-Variance arises when generics are combined with subtyping. Variance defines
-how subtyping of the *contained* type relates to subtyping of the
-*container* type. Because Scala has declaration site variance
-annotations, authors of common libraries -- especially collections --
-must be prolific annotators. Such annotations are important for the
-usability of shared code, but misapplication can be dangerous.
+Variância acontece quando a programação genérica é combinada com a
+subtipagem. Ela define como a subtipagem do tipo *contido* se relaciona
+com a subtipagem do tipo do *container*. Como o Scala possui anotações
+de variância declarativas, autores de bibliotecas comuns -- especialmente
+coleções -- devem ser anotadores prolíficos. Essas anotações são
+importantes para a usabilidade do código compartilhado, e seu mau
+uso pode ser perigoso.
 
-Invariants are an advanced but necessary aspect of Scala's typesystem,
-and should be used widely (and correctly) as it aids the application
-of subtyping.
+Invariantes são um aspecto avançado, porém necessário, do sistema de
+tipos do Scala e devev ser usadas extensamente (e corretamente) já que
+auxiliam na aplicação da subtipagem.
 
-*Immutable collections should be covariant*. Methods that receive
-the contained type should "downgrade" the collection appropriately:
+*Coleções imutáveis devem ser covariantes*. Métodos que recebem o
+tipo contido devem "rebaixar" a coleção apropriadamente:
 
 	trait Collection[+T] {
 	  def add[U >: T](other: U): Collection[U]
 	}
 
-*Mutable collections should be invariant*. Covariance
-is typically invalid with mutable collections. Consider
+*Coleções mutáveis devem ser invariantes*. Covariância é,
+geralmente, incompatível com coleções mutáveis. Considere
 
 	trait HashSet[+T] {
 	  def add[U >: T](item: U)
 	}
 
-.LP and the following type hierarchy:
+.LP e a seguinte hierarquia de tipos:
 
 	trait Mammal
 	trait Dog extends Mammal
 	trait Cat extends Mammal
 
-.LP If I now have a hash set of dogs
+.LP se agora possuo um HashSet do tipo Dog
 
 	val dogs: HashSet[Dog]
 
-.LP treat it as a set of Mammals and add a cat.
+.LP e trato-o como um set de Mammals para adicionar um Cat
 
 	val mammals: HashSet[Mammal] = dogs
 	mammals.add(new Cat{})
 
-.LP This is no longer a HashSet of dogs!
+.LP ele deixa de ser um HashSet do tipo Dog.
 
 <!--
   *	when to use abstract type members?
   *	show contravariance trick?
 -->
 
-### Type aliases
+### Alias de tipo
 
-Use type aliases when they provide convenient naming or clarify
-purpose, but do not alias types that are self-explanatory.
+Utilize alias de tipos quando eles fornecem uma nomeação
+conveniente ou propósito de clarificação, mas não quando são
+auto-explicativos.
 
 	() => Int
 
-.LP is clearer than
+.LP é mais claro que
 
 	type IntMaker = () => Int
 	IntMaker
 
-.LP since it is both short and uses a common type. However
+.LP pois é curto e usa um tipo comum. Contudo
 
 	class ConcurrentPool[K, V] {
 	  type Queue = ConcurrentLinkedQueue[V]
@@ -328,54 +332,54 @@ purpose, but do not alias types that are self-explanatory.
 	  ...
 	}
 
-.LP is helpful since it communicates purpose and enhances brevity.
+.LP é benéfico já que comunica propósito e aprimora a brevidade.
 
-Don't use subclassing when an alias will do.
+Não utilize a herança quando um alias é suficiente.
 
 	trait SocketFactory extends (SocketAddress => Socket)
 	
-.LP a <code>SocketFactory</code> <em>is</em> a function that produces a <code>Socket</code>. Using a type alias
+.LP um <code>SocketFactory</code> <em>é</em> uma função que produz um <code>Socket</code>. Usar um alias de tipo
 
 	type SocketFactory = SocketAddress => Socket
 
-.LP is better. We may now provide function literals for values of type <code>SocketFactory</code> and also use function composition:
+.LP é melhor. Agora podemos providenciar funções literais para valores do tipo <code>SocketFactory</code> e também usufruir da composição de funções:
 
 	val addrToInet: SocketAddress => Long
 	val inetToSocket: Long => Socket
 
 	val factory: SocketFactory = addrToInet andThen inetToSocket
 
-Type aliases are bound to toplevel names by using package objects:
+Alias de tipo são amarradas a nomes de topos ao usar package objects:
 
 	package com.twitter
 	package object net {
 	  type SocketFactory = (SocketAddress) => Socket
 	}
 
-Note that type aliases are not new types -- they are equivalent to
-the syntactically substituting the aliased name for its type.
+Note que alias de tipos não são novos tipos -- eles são equivalentes
+a substituição sintática do alias pelo seu tipo.
 
 ### Implicits
 
-Implicits are a powerful type system feature, but they should be used
-sparingly. They have complicated resolution rules and make it
-difficult -- by simple lexical examination -- to grasp what is actually
-happening. It's definitely OK to use implicits in the following
-situations:
+Implicits é uma funcionalidade poderosa do sistema de tipos, mas deve
+ser usada esporadicamente. Ela possui regras de resolução complexas
+e torna complicada -- por simples análise léxica -- a compreensão do
+que está acontecendo. É definitivamente aceitável usar implicits nas
+seguintes situações:
 
-* Extending or adding a Scala-style collection
-* Adapting or extending an object ("pimp my library" pattern)
-* Use to *enhance type safety* by providing constraint evidence
-* To provide type evidence (typeclassing)
-* For `Manifest`s
+* Extender ou acrescentar uma coleção estilo Scala
+* Adaptar ou extender um objeto (padrão "pimp my library")
+* *Aprimorar a segurança de tipos* providenciando evidência restritiva
+* Fornecer evidência de tipos (typeclasses)
+* Para `Manifest`os
 
-If you do find yourself using implicits, always ask yourself if there is
-a way to achieve the same thing without their help.
+Caso encontre-se utilizando implicits, sempre se pergunte se existe
+outra maneira de alcançar o mesmo objetivo.
 
-Do not use implicits to do automatic conversions between similar
-datatypes (for example, converting a list to a stream); these are
-better done explicitly because the types have different semantics, and
-the reader should beware of these implications.
+Não use implicits para efetuar a conversão automática entre tipos
+similares (por exemplo, conversão de list para stream); é melhor
+realiza-la explicitamente pois os tipos possuem semânticas diferentes
+e o leitor deve estar ciente das implicações.
 
 ## Collections
 
