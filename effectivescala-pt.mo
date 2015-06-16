@@ -150,7 +150,7 @@ provê mais informações que <code>User.get</code>.
 <dt>Ao usar coleções, classifique os nomes na importação
 <code>scala.collection.immutable</code> e/ou <code>scala.collection.mutable</code></dt>
 <dd>Coleções mutáveis e imutáveis possuem duplicidade de nomes.
-Classificar os nomes torna obvio ao leitor qual variação está sendo utilizada. (ex. "<code>immutable.Map</code>")</dd>
+Classificar os nomes torna obvio ao leitor qual variante está sendo utilizada. (ex. "<code>immutable.Map</code>")</dd>
 <dt>Não use imports relativos de outros pacotes</dt>
 <dd>Evite <pre><code>import com.twitter
 import concurrent</code></pre> e favoreça <pre><code>import com.twitter.concurrent</code></pre></dd>
@@ -337,7 +337,7 @@ auto-explicativos.
 Não utilize a herança quando um alias é suficiente.
 
 	trait SocketFactory extends (SocketAddress => Socket)
-	
+
 .LP um <code>SocketFactory</code> <em>é</em> uma função que produz um <code>Socket</code>. Usar um alias de tipo
 
 	type SocketFactory = SocketAddress => Socket
@@ -381,27 +381,26 @@ similares (por exemplo, conversão de list para stream); é melhor
 realiza-la explicitamente pois os tipos possuem semânticas diferentes
 e o leitor deve estar ciente das implicações.
 
-## Collections
+## Coleções
 
-Scala has a very generic, rich, powerful, and composable collections
-library; collections are high level and expose a large set of
-operations. Many collection manipulations and transformations can be
-expressed succinctly and readably, but careless application of these
-features can often lead to the opposite result. Every Scala programmer
-should read the [collections design
-document](http://www.scala-lang.org/docu/files/collections-api/collections.html);
-it provides great insight and motivation for Scala collections
-library.
+Scala possui uma biblioteca de coleções bastante genérica, rica,
+poderosa e modular; coleções são de alto nível e expõem um grande
+conjunto de operações. Muitas manipulações e transformações de
+coleções podem ser expressadas de forma sucinta e legível, embora
+a aplicação descuidada dessas funcionalidades possa frequentemente
+levar ao resultado oposto. Todo programador Scala deve ler o
+[documento de design de coleções](http://www.scala-lang.org/docu/files/collections-api/collections.html);
+ele fornece a visão e motivação da biblioteca de coleções do Scala.
 
-Always use the simplest collection that meets your needs.
+Sempre utilize a coleção mais simples que satisfaça suas necessidades.
 
-### Hierarchy
+### Hierarquia
 
-The collections library is large: in addition to an elaborate
-hierarchy -- the root of which being `Traversable[T]` -- there are
-`immutable` and `mutable` variants for most collections. Whatever
-the complexity, the following diagram contains the important 
-distinctions for both `immutable` and `mutable` hierarchies
+A biblioteca de coleções é enorme: em adição a uma hierarquia
+elaborada -- cuja raiz é `Traversable[T]` -- existem variantes
+`imutáveis` e `mutáveis` para a maioria das coleções. Independente
+da complexidade, o seguinte diagrama contem as distinções
+importantes n as hierarquias `imutável` e `mutável`
 
 <img src="coll.png" style="margin-left: 3em;" />
 .cmd
@@ -426,62 +425,65 @@ arrow from Iterable.s to Map.nw
 EOF
 .endcmd
 
-.LP <code>Iterable[T]</code> is any collection that may be iterated over, they provide an <code>iterator</code> method (and thus <code>foreach</code>). <code>Seq[T]</code>s are collections that are <em>ordered</em>, <code>Set[T]</code>s are mathematical sets (unordered collections of unique items), and <code>Map[T]</code>s are associative arrays, also unordered.
+.LP <code>Iterable[T]</code> é qualquer coleção que pode ser iterada, elas provêm um método <code>iterator</code> (e, consequentemente, <code>foreach</code>). <code>Seq[T]</code>s são coleções <em>ordenadas</em>, <code>Set[T]</code>s são conjuntos matemáticos (coleções não ordenadas de itens únicos), e <code>Map[T]</code>s são arrays associativos, também não ordenados.
 
-### Use
+### Uso
 
-*Prefer using immutable collections.* They are applicable in most
-circumstances, and make programs easier to reason about since they are
-referentially transparent and are thus also threadsafe by default.
+*Prefira utilizar coleções imutáveis.* Elas são aplicáveis na maioria
+das circunstâncias, favorecem o racioncínio sobre os programas já
+que são referenciamente transparentes e, portanto, thread-safe por
+padrão.
 
-*Use the `mutable` namespace explicitly.* Don't import
-`scala.collection.mutable._` and refer to `Set`, instead
+favorecem o raciocínio sobre os programas
+facilitam
+
+*Use o namespace `mutable` explicitamente.* Não importe
+`scala.collection.mutable._` e faça referência a `Set`, ao contrário
 
 	import scala.collection.mutable
 	val set = mutable.Set()
 
-.LP makes it clear that the mutable variant is being used.
+.LP torna mais claro que a variante mutável está sendo utilizada.
 
-*Use the default constructor for the collection type.* Whenever you
-need an ordered sequence (and not necessarily linked list semantics),
-use the `Seq()` constructor, and so on:
+*Use o construtor padrão do tipo da coleção.* Sempre que precisar de
+uma sequência ordenada (e não necessariamente da semântica de listas
+encadeadas), utilize o construtor `Seq()` e assim sucessivamente:
 
 	val seq = Seq(1, 2, 3)
 	val set = Set(1, 2, 3)
 	val map = Map(1 -> "one", 2 -> "two", 3 -> "three")
 
-.LP This style separates the semantics of the collection from its implementation, letting the collections library use the most appropriate type: you need a <code>Map</code>, not necessarily a Red-Black Tree. Furthermore, these default constructors will often use specialized representations: for example, <code>Map()</code> will use a 3-field object for maps with 3 keys.
+.LP Esse estilo separa a semântica da coleção de sua implementação, deixando que a biblioteca de coleções utilize o tipo mais apropriado: você precisa de um <code>Map</code>, não necessariamente de uma Árvore Red-Black. Ademais, os construtores padrões frequentemente utilizam as representações especializadas: por exemplo, <code>Map()</code> usará um objeto com três campos para mapas com três chaves.
 
-The corollary to the above is: in your own methods and constructors, *receive the most generic collection
-type appropriate*. This typically boils down to one of the above:
-`Iterable`, `Seq`, `Set`, or `Map`. If your method needs a sequence,
-use `Seq[T]`, not `List[T]`. (A word of caution: the *default* 
-`Traversable`, `Iterable` and `Seq` types in scope – defined in 
-`scala.package` – are the `scala.collection` versions, as opposed to 
-`Map` and `Set` – defined in `Predef.scala` – which are the `scala.collection.immutable` 
-versions. This means that, for example, the default `Seq` type can 
-be both the immutable *and* mutable implementations. Thus, if your 
-method relies on a collection parameter being immutable, and you are 
-using `Traversable`, `Iterable` or `Seq`, you *must* specifically 
-require/import the immutable variant, otherwise someone *may* pass 
-you the mutable version.)
+O corolário das observações acima é: em seus próprios métodos e construtores,
+*receba o tipo genérico mais apropriado da coleção*. Geralmente, acaba sendo
+um dos supracitados: `Iterable`, `Seq`, `Set`, ou `Map`. Se o seu método
+precisa de uma sequência, use `Seq[T]`, não `List[T]`. (Uma palavra de
+precaução: os tipos *padrão* em escopo de `Traversable`, `Iterable` e `Seq`
+– definidos no `scala.package` – são as versões presentes em `scala.collection`,
+ao contrário de `Map` e `Set` – definidos no `Predef.scala` – que são as
+versões de `scala.collection.immutable`. Isso significa que, por exemplo,
+o tipo `Seq` padrão pode ser a implementação mutável *e* imutável. Assim,
+se seu método depende da imutabilidade de um parâmetro de coleção, você
+*deve* importar a variante imutável, ou alguém *poderá* passar a versão
+mutável.)
 
 <!--
 something about buffers for construction?
 anything about streams?
 -->
 
-### Style
+### Estilo
 
-Functional programming encourages pipelining transformations of an
-immutable collection to shape it to its desired result. This often
-leads to very succinct solutions, but can also be confusing to the
-reader -- it is often difficult to discern the author's intent, or keep
-track of all the intermediate results that are only implied. For example,
-let's say we wanted to aggregate votes for different programming 
-languages from a sequence of (language, num votes), showing them
-in order of most votes to least, we could write:
-	
+A programação funcional encoraja o encadeamento de transformações de
+uma coleção imutável para chegar até o resultado desejado. Frequentemente,
+isso leva a soluções muito sucintas, mas pode ser confuso para o
+leitor -- muitas vezes é difícil distinguir a intenção do autor ou
+compreender os estados intermediários implícitos. Por exemplo, digamos
+que queiramos agregar votos de diferentes linguagens de programação
+de uma sequência de (linguagem, num votos), mostrando-as em ordem
+decrescente de votos. Poderíamos escrever:
+
 	val votes = Seq(("scala", 1), ("java", 4), ("scala", 10), ("scala", 1), ("python", 10))
 	val orderedVotes = votes
 	  .groupBy(_._1)
@@ -491,7 +493,7 @@ in order of most votes to least, we could write:
 	  .sortBy(_._2)
 	  .reverse
 
-.LP this is both succinct and correct, but nearly every reader will have a difficult time recovering the original intent of the author. A strategy that often serves to clarify is to <em>name intermediate results and parameters</em>:
+.LP é sucinto e correto, mas quase todos os leitores vão ter dificuldade para identificar a intenção original do autor. Uma estratégia que frequentemente auxilia na clarificação é <em>nomear os resultados e parâmetros intermediários</em>:
 
 	val votesByLang = votes groupBy { case (lang, _) => lang }
 	val sumByLang = votesByLang map { case (lang, counts) =>
@@ -502,7 +504,7 @@ in order of most votes to least, we could write:
 	  .sortBy { case (_, count) => count }
 	  .reverse
 
-.LP the code is nearly as succinct, but much more clearly expresses both the transformations take place (by naming intermediate values), and the structure of the data being operated on (by naming parameters). If you worry about namespace pollution with this style, group expressions with <code>{}</code>:
+.LP o código é quase tão sucinto, porém expressa muito mais claramente tanto as transformações que ocorrem (através da nomeação de valores intermediários), quanto a estruturas de dados utilizadas (pela nomeação dos parâmetros). Caso você se preocupe com a poluição do namespace, agrupe as expressões com <code>{}</code>:
 
 	val orderedVotes = {
 	  val votesByLang = ...
@@ -512,43 +514,44 @@ in order of most votes to least, we could write:
 
 ### Performance
 
-High level collections libraries (as with higher level constructs
-generally) make reasoning about performance more difficult: the
-further you stray from instructing the computer directly -- in other
-words, imperative style -- the harder it is to predict the exact
-performance implications of a piece of code. Reasoning about
-correctness however, is typically easier; readability is also
-enhanced. With Scala the picture is further complicated by the Java
-runtime; Scala hides boxing/unboxing operations from you, which can
-incur severe performance or space penalties.
+Bibliotecas de coleções de alto nível (como geralmente acontece com
+construções de alto nível) dificultam o raciocício sobre performance:
+quanto mais você se distância de instruir o computador diretamente --
+em outras palavras, no estilo imperativo -- mais difícil é de pressupor
+as implicações de desempenho de um pedaço de código. Argumentar sobre
+a corretude, no entanto, é tipicamente mais fácil; a legibilidade
+também é melhorada. Com o Scala, o panorama torna-se ainda mais
+complexo devido ao runtime do Java; Scala oculta de você as operações
+de boxing/unboxing, e elas podem incorrer em penalizações severas de
+performance ou espaço.
 
-Before focusing on low level details, make sure you are using a
-collection appropriate for your use. Make sure your datastructure
-doesn't have unexpected asymptotic complexity. The complexities of the
-various Scala collections are described
-[here](http://www.scala-lang.org/docu/files/collections-api/collections_40.html).
+Antes de se focar em detalhes de baixo nível, certifique que você
+está utilizando uma coleção apropriada para a circunstância. Garanta
+que sua estrutura de dados não tem uma complexidade assintótica
+inesperada. A complexidade das diversas coleções do Scala são
+descritas [aqui](http://www.scala-lang.org/docu/files/collections-api/collections_40.html).
 
-The first rule of optimizing for performance is to understand *why*
-your application is slow. Do not operate without data;
-profile^[[Yourkit](http://yourkit.com) is a good profiler] your
-application before proceeding. Focus first on hot loops and large data
-structures. Excessive focus on optimization is typically wasted
-effort. Remember Knuth's maxim: "Premature optimisation is the root of
-all evil."
+A primeira regra da otimização de performance é compreender o *porquê*
+de sua aplicação estar devagar. Não aja sem dados; faça um
+profiling^[[Yourkit](http://yourkit.com) é um bom profiler] de sua
+aplicação antes de proceder. Atente-se primeiro em loops e grandes
+estruturas de dados. Foco excessivo em otimização é, geralmente,
+desperdício de esforço. Lembre da máxima de Knuth: "Otimização
+prematura é a raiz de todo mal".
 
-It is often appropriate to use lower level collections in situations
-that require better performance or space efficiency. Use arrays
-instead of lists for large sequences (the immutable `Vector`
-collections provides a referentially transparent interface to arrays);
-and use buffers instead of direct sequence construction when
-performance matters.
+É frequentemente apropriado usar coleções de baixo nível em situações
+que requerem melhor desempenho ou eficiência de espaço. Use arrays ao
+invés de listas para sequências grandes (a coleção imutável `Vector`
+fornece uma interface referencialmente transparente para arrays); e
+utilize buffers ao invés da construção direta de sequências quando
+a performance for importante.
 
-### Java Collections
+### Coleções Java
 
-Use `scala.collection.JavaConverters` to interoperate with Java collections.
-These are a set of implicits that add `asJava` and `asScala` conversion
-methods. The use of these ensures that such conversions are explicit, aiding
-the reader:
+Utilize `scala.collection.JavaConverters` para interoperar com coleções
+Java. É um conjunto de implicits que adiciona os métodos de conversão
+`asJava`e `asScala`. O uso desses garante que as conversões são explícitas,
+auxiliando o leitor:
 
 	import scala.collection.JavaConverters._
 	
